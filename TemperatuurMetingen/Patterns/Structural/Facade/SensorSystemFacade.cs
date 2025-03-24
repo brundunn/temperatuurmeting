@@ -106,5 +106,41 @@ namespace TemperatuurMetingen.Patterns.Structural.Facade
             }
             return null;
         }
+        
+        public SensorData ProcessSensorDataAndReturn(string rawData)
+        {
+            try
+            {
+                // Determine the correct parser based on the data format
+                ISensorDataParser parser = DetermineParser(rawData);
+                if (parser == null)
+                {
+                    Console.WriteLine($"No suitable parser found for data: {rawData}");
+                    return null;
+                }
+        
+                // Process the data
+                SensorData data = parser.Parse(rawData);
+        
+                // Register the sensor type
+                if (!string.IsNullOrEmpty(data.SerialNumber) && !string.IsNullOrEmpty(data.Type))
+                {
+                    _typeManager.RegisterSensorType(data.SerialNumber, data.Type);
+                }
+        
+                // Analyze the data
+                _analyzerManager.AnalyzeData(data);
+        
+                // Notify observers
+                _subject.Notify(data);
+        
+                return data;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error processing sensor data: {ex.Message}");
+                return null;
+            }
+        }
     }
 }
