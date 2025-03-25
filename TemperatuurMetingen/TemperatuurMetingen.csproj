@@ -11,6 +11,7 @@
       <PackageReference Include="Akka" Version="1.5.40" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0-preview.2.25163.2" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.0-preview.2.25163.2" />
+      <PackageReference Include="System.Text.Json" Version="10.0.0-preview.2.25163.2" />
       <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     </ItemGroup>
 
