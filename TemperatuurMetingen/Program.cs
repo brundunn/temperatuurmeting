@@ -11,104 +11,127 @@ using TemperatuurMetingen.Services;
 namespace TemperatuurMetingen
 {
     class Program
-    {
-        // Update the Main method in Program.cs to use concurrency patterns
-static async Task Main(string[] args)
-{
-    Console.WriteLine("Temperature Sensor Monitoring System");
-    Console.WriteLine("====================================");
-    
-    // Create the facade
-    var sensorSystem = new SensorSystemFacade();
-    
-    // Create a custom observer for statistics
-    var statisticsObserver = new StatisticsObserver();
-    sensorSystem.AddObserver(statisticsObserver);
-    
-    // Get file path from user or use default
-    string filePath = "sensor_data.txt";
-    if (args.Length > 0)
-    {
-        filePath = args[0];
-    }
-    else
-    {
-        Console.WriteLine("Enter the path to the sensor data file (or press Enter to use default 'sensor_data.txt'):");
-        string input = Console.ReadLine();
-        if (!string.IsNullOrWhiteSpace(input))
+    {   
+        static async Task Main(string[] args)
         {
-            filePath = input;
+            Console.WriteLine("Temperature Sensor Monitoring System");
+            Console.WriteLine("====================================");
+    
+            // Create the facade
+            var sensorSystem = new SensorSystemFacade();
+    
+            // Create a custom observer for statistics
+            var statisticsObserver = new StatisticsObserver();
+            sensorSystem.AddObserver(statisticsObserver);
+    
+            // Get file path from user or use default
+            string filePath = "sensor_data.txt";
+            if (args.Length > 0)
+            {
+                filePath = args[0];
+            }
+            else
+            {
+                Console.WriteLine("Enter the path to the sensor data file (or press Enter to use default 'sensor_data.txt'):");
+                string input = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(input))
+                {
+                    filePath = input;
+                }
+            }
+    
+            Console.WriteLine("\nChoose processing method:");
+            Console.WriteLine("1. Sequential processing");
+            Console.WriteLine("2. Thread Pool processing (parallel)");
+            Console.WriteLine("3. Producer-Consumer streaming");
+    
+            string choice = Console.ReadLine();
+    
+            if (choice == "2")
+            {
+                // Use Thread Pool pattern
+                Console.WriteLine("\nUsing Thread Pool pattern for parallel processing...");
+        
+                var threadPoolProcessor = new ThreadPoolDataProcessor(sensorSystem);
+        
+                // Read all lines and process them in parallel
+                string[] lines = await File.ReadAllLinesAsync(filePath);
+                await threadPoolProcessor.ProcessDataLinesAsync(lines);
+            }
+            else if (choice == "3")
+            {
+                // Use Producer-Consumer pattern
+                Console.WriteLine("\nUsing Producer-Consumer pattern for streaming processing...");
+        
+                var streamingProcessor = new StreamingDataProcessor(sensorSystem);
+                streamingProcessor.Start();
+        
+                // Process the file as a stream
+                await streamingProcessor.ProcessFileStreamAsync(filePath, 200);
+        
+                // Wait for processing to complete
+                Console.WriteLine("Waiting for all data to be processed...");
+                await Task.Delay(1000);
+        
+                // Stop the processor
+                streamingProcessor.Stop();
+            }
+            else
+            {
+                // Sequential processing (original method)
+                Console.WriteLine("\nUsing sequential processing...");
+        
+                var fileReader = new FileDataReader(sensorSystem);
+                await fileReader.ReadDataFromFile(filePath);
+            }
+            // Organize sensors by manufacturer
+            sensorSystem.OrganizeSensorsByManufacturer();
+
+            // Display sensor hierarchy
+            sensorSystem.DisplaySensorHierarchy();
+
+            // Get and display stats for temperature and humidity groups
+            Console.WriteLine("\nTemperature Sensors Group Statistics:");
+            var tempStats = sensorSystem.GetGroupStats("type:temp");
+            if (tempStats.Count > 0)
+            {
+                Console.WriteLine($"  Average Temperature: {tempStats["Temperature"]:F2}°C");
+                Console.WriteLine($"  Average Battery Level: {tempStats["BatteryLevel"]:F2}%");
+                Console.WriteLine($"  Total Data Points: {tempStats["DataPointCount"]}");
+            }
+
+            Console.WriteLine("\nHumidity Sensors Group Statistics:");
+            var humStats = sensorSystem.GetGroupStats("type:humidity");
+            if (humStats.Count > 0)
+            {
+                Console.WriteLine($"  Average Humidity: {humStats["Humidity"]:F2}%");
+                Console.WriteLine($"  Average Battery Level: {humStats["BatteryLevel"]:F2}%");
+                Console.WriteLine($"  Total Data Points: {humStats["DataPointCount"]}");
+            }
+    
+            // Display statistics
+            statisticsObserver.DisplayStatistics();
+    
+            // Display all sensor types
+            Console.WriteLine("\nDetected Sensor Types:");
+            var sensorTypes = sensorSystem.GetAllSensorTypes();
+            foreach (var sensor in sensorTypes)
+            {
+                Console.WriteLine($"Serial: {sensor.Key}, Type: {sensor.Value}");
+            }
+    
+            // Display analysis results
+            Console.WriteLine("\nAnalysis Results:");
+            var analysisResults = sensorSystem.GetAllAnalysisResults();
+            foreach (var result in analysisResults)
+            {
+                Console.WriteLine($"\n{result.Key}:");
+                Console.WriteLine(result.Value);
+            }
+    
+            Console.WriteLine("\nPress any key to exit...");
+            Console.ReadKey();
         }
-    }
-    
-    Console.WriteLine("\nChoose processing method:");
-    Console.WriteLine("1. Sequential processing");
-    Console.WriteLine("2. Thread Pool processing (parallel)");
-    Console.WriteLine("3. Producer-Consumer streaming");
-    
-    string choice = Console.ReadLine();
-    
-    if (choice == "2")
-    {
-        // Use Thread Pool pattern
-        Console.WriteLine("\nUsing Thread Pool pattern for parallel processing...");
-        
-        var threadPoolProcessor = new ThreadPoolDataProcessor(sensorSystem);
-        
-        // Read all lines and process them in parallel
-        string[] lines = await File.ReadAllLinesAsync(filePath);
-        await threadPoolProcessor.ProcessDataLinesAsync(lines);
-    }
-    else if (choice == "3")
-    {
-        // Use Producer-Consumer pattern
-        Console.WriteLine("\nUsing Producer-Consumer pattern for streaming processing...");
-        
-        var streamingProcessor = new StreamingDataProcessor(sensorSystem);
-        streamingProcessor.Start();
-        
-        // Process the file as a stream
-        await streamingProcessor.ProcessFileStreamAsync(filePath, 200);
-        
-        // Wait for processing to complete
-        Console.WriteLine("Waiting for all data to be processed...");
-        await Task.Delay(1000);
-        
-        // Stop the processor
-        streamingProcessor.Stop();
-    }
-    else
-    {
-        // Sequential processing (original method)
-        Console.WriteLine("\nUsing sequential processing...");
-        
-        var fileReader = new FileDataReader(sensorSystem);
-        await fileReader.ReadDataFromFile(filePath);
-    }
-    
-    // Display statistics
-    statisticsObserver.DisplayStatistics();
-    
-    // Display all sensor types
-    Console.WriteLine("\nDetected Sensor Types:");
-    var sensorTypes = sensorSystem.GetAllSensorTypes();
-    foreach (var sensor in sensorTypes)
-    {
-        Console.WriteLine($"Serial: {sensor.Key}, Type: {sensor.Value}");
-    }
-    
-    // Display analysis results
-    Console.WriteLine("\nAnalysis Results:");
-    var analysisResults = sensorSystem.GetAllAnalysisResults();
-    foreach (var result in analysisResults)
-    {
-        Console.WriteLine($"\n{result.Key}:");
-        Console.WriteLine(result.Value);
-    }
-    
-    Console.WriteLine("\nPress any key to exit...");
-    Console.ReadKey();
-}
     }
     
     // Custom observer for statistics

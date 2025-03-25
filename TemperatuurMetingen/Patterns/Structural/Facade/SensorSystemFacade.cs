@@ -6,6 +6,7 @@ using TemperatuurMetingen.Patterns.Creational.Factory;
 using TemperatuurMetingen.Patterns.Behavioral.Observer;
 using TemperatuurMetingen.Patterns.Creational.Singleton;
 using TemperatuurMetingen.Patterns.Behavioral.Strategy;
+using TemperatuurMetingen.Patterns.Structural.Composite;
 using TemperatuurMetingen.Services;
 
 namespace TemperatuurMetingen.Patterns.Structural.Facade
@@ -17,6 +18,7 @@ namespace TemperatuurMetingen.Patterns.Structural.Facade
         private readonly SensorTypeManager _typeManager;
         private readonly List<ISensorDataParser> _parsers;
         private readonly AnalyzerManager _analyzerManager;
+        private readonly SensorCompositeManager _compositeManager;
         
         public SensorSystemFacade()
         {
@@ -24,6 +26,7 @@ namespace TemperatuurMetingen.Patterns.Structural.Facade
             _subject = new SensorDataSubject();
             _typeManager = SensorTypeManager.Instance;
             _analyzerManager = new AnalyzerManager();
+            _compositeManager = new SensorCompositeManager();
             
             // Initialize parsers
             _parsers = new List<ISensorDataParser>
@@ -57,6 +60,9 @@ namespace TemperatuurMetingen.Patterns.Structural.Facade
                 // Process the data
                 SensorData data = parser.Parse(rawData);
                 
+                // Add data to the composite manager
+                _compositeManager.AddSensorData(data);
+                
                 // Register the sensor type
                 if (!string.IsNullOrEmpty(data.SerialNumber) && !string.IsNullOrEmpty(data.Type))
                 {
@@ -75,6 +81,19 @@ namespace TemperatuurMetingen.Patterns.Structural.Facade
             }
         }
         
+        public void DisplaySensorHierarchy()
+        {
+            _compositeManager.DisplayHierarchy();
+        }
+        public void OrganizeSensorsByManufacturer()
+        {
+            _compositeManager.OrganizeSensorsByManufacturer();
+        }
+
+        public Dictionary<string, double> GetGroupStats(string groupName)
+        {
+            return _compositeManager.GetGroupStats(groupName);
+        }
         public void AddObserver(ISensorDataObserver observer)
         {
             _subject.Attach(observer);
