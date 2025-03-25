@@ -6,7 +6,7 @@ Het doel van deze opdracht is om je kennis en begrip van Design Patterns te verd
 
 Voor deze opdracht dien je:
 
-1. Minimaal twee Design Patternsnaar keuze PER GROEP uit te werken en te implementeren in C#.
+1. Minimaal twee Design Patterns naar keuze PER GROEP uit te werken en te implementeren in C#.
 
     Dit kan als onderdeel van een zelfgekozen toepassing of losstaande voorbeelden.
     Zorg ervoor dat je werkende en goed gedocumenteerde code inlevert.
