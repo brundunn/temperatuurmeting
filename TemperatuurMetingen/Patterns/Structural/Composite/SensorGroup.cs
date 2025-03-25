@@ -136,5 +136,16 @@ namespace TemperatuurMetingen.Patterns.Structural.Composite
         {
             return _components.Sum(c => c.GetSensorCount());
         }
+        
+        public void Accept(ISensorVisitor visitor)
+        {
+            visitor.Visit(this);
+    
+            // Visit all children
+            foreach (var component in _components)
+            {
+                component.Accept(visitor);
+            }
+        }
     }
 }

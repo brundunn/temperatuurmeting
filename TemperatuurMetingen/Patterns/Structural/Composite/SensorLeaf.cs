@@ -113,5 +113,10 @@ namespace TemperatuurMetingen.Patterns.Structural.Composite
         {
             return 1;
         }
+        
+        public void Accept(ISensorVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
     }
 }

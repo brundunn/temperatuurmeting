@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "HlHPCXt46Hg=",
+  "dgSpecHash": "41XwQZIQhN4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\brand\\RiderProjects\\temperatuurmeting\\TemperatuurMetingen\\TemperatuurMetingen.csproj",
+  "projectFilePath": "C:\\Users\\brand\\RiderProjects\\TemperatuurMetingen\\TemperatuurMetingen\\TemperatuurMetingen.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\brand\\.nuget\\packages\\microsoft.extensions.configuration\\10.0.0-preview.2.25163.2\\microsoft.extensions.configuration.10.0.0-preview.2.25163.2.nupkg.sha512",
     "C:\\Users\\brand\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\10.0.0-preview.2.25163.2\\microsoft.extensions.configuration.abstractions.10.0.0-preview.2.25163.2.nupkg.sha512",

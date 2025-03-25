@@ -3,7 +3,7 @@ using TemperatuurMetingen.Core.Models;
 
 namespace TemperatuurMetingen.Core.Interfaces
 {
-    public interface ISensorComponent
+    public interface ISensorComponent : IVisitable
     {
         string Name { get; }
         string Type { get; }
