@@ -168,5 +168,12 @@ namespace TemperatuurMetingen.Patterns.Structural.Composite
             else
                 return "Unknown";
         }
+        
+        public string ApplyVisitor(ISensorVisitor visitor)
+        {
+            visitor.Reset();
+            RootGroup.Accept(visitor);
+            return visitor.GetResult();
+        }
     }
 }
