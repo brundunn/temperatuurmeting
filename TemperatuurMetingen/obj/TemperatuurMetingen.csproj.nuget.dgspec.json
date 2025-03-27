@@ -55,6 +55,26 @@
               "target": "Package",
               "version": "[1.5.40, )"
             },
+            "Akka.TestKit": {
+              "target": "Package",
+              "version": "[1.5.40, )"
+            },
+            "Microsoft.AspNetCore.SignalR": {
+              "target": "Package",
+              "version": "[1.2.0, )"
+            },
+            "Microsoft.AspNetCore.SignalR.Common": {
+              "target": "Package",
+              "version": "[10.0.0-preview.2.25164.1, )"
+            },
+            "Microsoft.AspNetCore.SignalR.Core": {
+              "target": "Package",
+              "version": "[1.2.0, )"
+            },
+            "Microsoft.AspNetCore.SignalR.Protocols.Json": {
+              "target": "Package",
+              "version": "[10.0.0-preview.2.25164.1, )"
+            },
             "Microsoft.Extensions.Configuration": {
               "target": "Package",
               "version": "[10.0.0-preview.2.25163.2, )"
@@ -63,6 +83,10 @@
               "target": "Package",
               "version": "[10.0.0-preview.2.25163.2, )"
             },
+            "Moq": {
+              "target": "Package",
+              "version": "[4.20.72, )"
+            },
             "System.Text.Json": {
               "target": "Package",
               "version": "[10.0.0-preview.2.25163.2, )"
@@ -70,6 +94,10 @@
             "System.Text.RegularExpressions": {
               "target": "Package",
               "version": "[4.3.1, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.9.3, )"
             }
           },
           "imports": [
