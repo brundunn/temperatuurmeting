@@ -1534,16 +1534,16 @@ public class SingletonPatternTests
 {
     [TestMethod]
     public void SingletonInstance_ShouldReturnSameInstance()
-    {
-        // Arrange & Act
-        var instance1 = SensorTypeManager.Instance;
-        var instance2 = SensorTypeManager.Instance;
-        
-        // Assert
-        Assert.IsNotNull(instance1);
-        Assert.IsNotNull(instance2);
-        Assert.AreSame(instance1, instance2, "Singleton should return the same instance");
-    }
+        {
+            // Arrange & Act
+            var instance1 = SensorTypeManager.Instance;
+            var instance2 = SensorTypeManager.Instance;
+
+            // Assert
+            Assert.IsNotNull(instance1);
+            Assert.IsNotNull(instance2);
+            Assert.AreSame(instance1, instance2, "Singleton should return the same instance");
+        }
     
     // Additional tests...
 }
@@ -1555,52 +1555,82 @@ Special attention was given to testing concurrent patterns like Thread Pool and 
 
 ```csharp
 [TestMethod]
-public async Task ThreadPool_ShouldExecuteInParallel()
-{
-    // Arrange
-    var threadPool = ThreadPoolManager.Instance;
-    int concurrentExecutions = 0;
-    int maxConcurrentExecutions = 0;
-    object lockObj = new object();
-    
-    using var executionBarrier = new ManualResetEvent(false);
-    
-    // Act - Create multiple tasks that will all try to run at once
-    var tasks = new List<Task>();
-    
-    for (int i = 0; i < 5; i++)
-    {
-        tasks.Add(Task.Run(async () => {
-            await threadPool.QueueTaskAsync(() => {
-                // Track concurrent execution
-                lock (lockObj)
-                {
-                    concurrentExecutions++;
-                    maxConcurrentExecutions = Math.Max(maxConcurrentExecutions, concurrentExecutions);
-                }
-                
-                // Wait at barrier to ensure concurrent execution
-                executionBarrier.WaitOne();
-                
-                lock (lockObj)
-                {
-                    concurrentExecutions--;
-                }
-            });
-        }));
-    }
-    
-    // Give tasks time to start
-    await Task.Delay(1000);
-    
-    // Release barrier and complete tasks
-    executionBarrier.Set();
-    await Task.WhenAll(tasks);
-    
-    // Assert
-    Assert.IsTrue(maxConcurrentExecutions > 1, 
-        "ThreadPool should execute tasks in parallel");
-}
+public async Task Tasks_ShouldExecuteInParallel()
+        {
+            // Arrange
+            var threadPool = ThreadPoolManager.Instance;
+            var parallelTasks = 5;
+
+            // We'll use a thread-safe counter to track concurrent execution
+            int concurrentExecutions = 0;
+            int maxConcurrentExecutions = 0;
+
+            // Use this for synchronizing access to counters
+            object lockObj = new object();
+
+            // EventWaitHandle to keep tasks running until we're ready to check
+            using var executionBarrier = new ManualResetEvent(false);
+
+            // Act - Create multiple tasks that will all try to run at once
+            var tasks = new List<Task>();
+
+            Console.WriteLine("Starting parallel execution test...");
+
+            for (int i = 0; i < parallelTasks; i++)
+            {
+                tasks.Add(Task.Run(async () => {
+                    await threadPool.QueueTaskAsync(() => {
+                        // Signal that this task has started execution
+                        lock (lockObj)
+                        {
+                            concurrentExecutions++;
+                            if (concurrentExecutions > maxConcurrentExecutions)
+                            {
+                                maxConcurrentExecutions = concurrentExecutions;
+                            }
+
+                            Console.WriteLine($"Task entered execution, current count: {concurrentExecutions}");
+                        }
+
+                        // All tasks will wait here on the same barrier
+                        // This ensures they all run concurrently if parallel execution is working
+                        executionBarrier.WaitOne();
+
+                        // Signal that this task is finishing execution
+                        lock (lockObj)
+                        {
+                            concurrentExecutions--;
+                            Console.WriteLine($"Task exiting, remaining count: {concurrentExecutions}");
+                        }
+                    });
+                }));
+            }
+
+            // Give all tasks a chance to start
+            await Task.Delay(1000);
+
+            // Record the maximum concurrent executions before we let tasks complete
+            int recordedMax = maxConcurrentExecutions;
+            Console.WriteLine($"Maximum concurrent executions detected: {recordedMax}");
+
+            // Release the barrier so tasks can complete
+            executionBarrier.Set();
+
+            // Wait for all tasks to complete
+            await Task.WhenAll(tasks);
+
+            // Assert
+            Console.WriteLine($"Final max concurrent executions: {recordedMax}");
+
+            // If tasks ran in parallel, we should have seen more than 1 task running concurrently
+            Assert.IsTrue(recordedMax > 1,
+                $"Expected multiple concurrent executions, but maximum was only {recordedMax}");
+
+            // Ideally, all tasks should run concurrently on a system with enough cores
+            // But we'll be a bit more lenient to account for varying environments
+            Assert.IsTrue(recordedMax >= 2,
+                "ThreadPool should support at least 2 concurrent tasks");
+        }
 ```
 
 ### Testing the Visitor Pattern
@@ -1609,28 +1639,35 @@ Tests for the Visitor pattern validate that visitors can traverse the composite 
 
 ```csharp
 [TestMethod]
-public void SensorGroup_ShouldPropagateCVisitorToChildren()
-{
-    // Arrange
-    var rootGroup = new SensorGroup("Root");
-    var childGroup = new SensorGroup("Child");
-    var sensor1 = new SensorLeaf("1", "Sensor1");
-    var sensor2 = new SensorLeaf("2", "Sensor2");
-    
-    // Build the hierarchy
-    rootGroup.AddComponent(childGroup);
-    childGroup.AddComponent(sensor1);
-    rootGroup.AddComponent(sensor2);
-    
-    var visitor = new MockVisitor();
-    
-    // Act
-    rootGroup.Accept(visitor);
-    
-    // Assert
-    Assert.AreEqual(2, visitor.LeafVisitCount, "Visitor should visit both leaf sensors");
-    Assert.AreEqual(2, visitor.GroupVisitCount, "Visitor should visit both groups");
-}
+        public void SensorGroup_ShouldPropagateCVisitorToChildren()
+        {
+            // Arrange
+            var rootGroup = new SensorGroup("Root");
+            var childGroup = new SensorGroup("Child");
+            var sensor1 = new SensorLeaf("1", "Sensor1");
+            var sensor2 = new SensorLeaf("2", "Sensor2");
+
+            // Build the hierarchy
+            rootGroup.AddComponent(childGroup);
+            childGroup.AddComponent(sensor1);
+            rootGroup.AddComponent(sensor2);
+
+            var visitor = new MockVisitor();
+
+            // Act
+            rootGroup.Accept(visitor);
+
+            // Assert
+            Assert.AreEqual(2, visitor.LeafVisitCount, "Visitor should visit both leaf sensors");
+            Assert.AreEqual(2, visitor.GroupVisitCount, "Visitor should visit both groups");
+            Assert.AreEqual(4, visitor.VisitedNames.Count, "Visitor should visit 4 elements total");
+
+            // Order might vary but all names should be present
+            CollectionAssert.Contains(visitor.VisitedNames, "Root");
+            CollectionAssert.Contains(visitor.VisitedNames, "Child");
+            CollectionAssert.Contains(visitor.VisitedNames, "Sensor1");
+            CollectionAssert.Contains(visitor.VisitedNames, "Sensor2");
+        }
 ```
 
 ### Testing Coverage
