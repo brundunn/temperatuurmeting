@@ -11,6 +11,13 @@ namespace TemperatuurMetingen
 {
     class Program
     {
+        /// <summary>
+        /// Main entry point for the Temperature Sensor Monitoring System.
+        /// Demonstrates multiple design patterns including Facade, Observer, Singleton, 
+        /// Factory Method, Composite, Visitor, Actor Model, and Bridge.
+        /// </summary>
+        /// <param name="args">Command line arguments. The first argument can be a path to a sensor data file.</param>
+        /// <returns>An asynchronous task that represents the execution of the main program.</returns>
         static async Task Main(string[] args)
         {
             Console.WriteLine("Temperature Sensor Monitoring System");
@@ -136,19 +143,62 @@ namespace TemperatuurMetingen
             }
         }
 
+        /// <summary>
+        /// Observer class that collects and displays statistics on sensor data.
+        /// Implements the ISensorDataObserver interface as part of the Observer pattern.
+        /// </summary>
         class StatisticsObserver : ISensorDataObserver
         {
+            /// <summary>
+            /// Total number of sensor readings processed.
+            /// </summary>
             private int _totalReadings = 0;
+            
+            /// <summary>
+            /// Sum of all temperature readings for calculating average.
+            /// </summary>
             private double _totalTemperature = 0;
+            
+            /// <summary>
+            /// Maximum temperature reading observed.
+            /// </summary>
             private double _maxTemperature = double.MinValue;
+            
+            /// <summary>
+            /// Minimum temperature reading observed.
+            /// </summary>
             private double _minTemperature = double.MaxValue;
+            
+            /// <summary>
+            /// Count of valid temperature readings processed.
+            /// </summary>
             private int _tempReadings = 0;
 
+            /// <summary>
+            /// Sum of all humidity readings for calculating average.
+            /// </summary>
             private double _totalHumidity = 0;
+            
+            /// <summary>
+            /// Maximum humidity reading observed.
+            /// </summary>
             private double _maxHumidity = double.MinValue;
+            
+            /// <summary>
+            /// Minimum humidity reading observed.
+            /// </summary>
             private double _minHumidity = double.MaxValue;
+            
+            /// <summary>
+            /// Count of valid humidity readings processed.
+            /// </summary>
             private int _humReadings = 0;
 
+            /// <summary>
+            /// Processes new sensor data and updates the statistics.
+            /// Implements the Update method from the ISensorDataObserver interface.
+            /// </summary>
+            /// <param name="data">The sensor data object to process.</param>
             public void Update(SensorData data)
             {
                 _totalReadings++;
@@ -170,6 +220,10 @@ namespace TemperatuurMetingen
                 }
             }
 
+            /// <summary>
+            /// Displays the collected statistics to the console.
+            /// Shows total readings count and statistics for temperature and humidity if available.
+            /// </summary>
             public void DisplayStatistics()
             {
                 Console.WriteLine("\nSensor Statistics:");
