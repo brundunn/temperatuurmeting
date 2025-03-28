@@ -6,20 +6,57 @@ using TemperatuurMetingen.Patterns.Concurrency.Actor.Messages;
 
 namespace TemperatuurMetingen.Patterns.Concurrency.Actor.Actors
 {
+    /// <summary>
+    /// Actor responsible for monitoring sensor data and generating alerts based on configured thresholds.
+    /// Implements the Actor pattern using Akka.NET framework.
+    /// </summary>
     public class AlertActor : ReceiveActor
     {
+        /// <summary>
+        /// Dictionary containing alert thresholds for different sensor types.
+        /// </summary>
         private readonly Dictionary<string, AlertThresholds> _thresholds = new Dictionary<string, AlertThresholds>();
+        
+        /// <summary>
+        /// List of generated alerts with timestamps.
+        /// </summary>
         private readonly List<string> _alerts = new List<string>();
 
+        /// <summary>
+        /// Inner class defining the threshold values for various sensor measurements.
+        /// </summary>
         private class AlertThresholds
         {
+            /// <summary>
+            /// The upper temperature threshold in degrees Celsius.
+            /// </summary>
             public double TemperatureHigh { get; set; } = 30.0;
+            
+            /// <summary>
+            /// The lower temperature threshold in degrees Celsius.
+            /// </summary>
             public double TemperatureLow { get; set; } = 10.0;
+            
+            /// <summary>
+            /// The upper humidity threshold as a percentage.
+            /// </summary>
             public double HumidityHigh { get; set; } = 80.0;
+            
+            /// <summary>
+            /// The lower humidity threshold as a percentage.
+            /// </summary>
             public double HumidityLow { get; set; } = 20.0;
+            
+            /// <summary>
+            /// The lower battery threshold as a percentage.
+            /// </summary>
             public double BatteryLow { get; set; } = 30.0;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AlertActor"/> class.
+        /// Sets up default thresholds and configures message handlers.
+        /// </summary>
         public AlertActor()
         {
             // Default thresholds
@@ -33,6 +70,10 @@ namespace TemperatuurMetingen.Patterns.Concurrency.Actor.Actors
             Receive<GetStatusMessage>(message => { Sender.Tell(string.Join("\n", _alerts)); });
         }
 
+        /// <summary>
+        /// Checks sensor data against configured thresholds and generates alerts if thresholds are exceeded.
+        /// </summary>
+        /// <param name="data">The sensor data to check for potential alerts.</param>
         private void CheckForAlerts(SensorData data)
         {
             if (string.IsNullOrEmpty(data.SerialNumber) || string.IsNullOrEmpty(data.Type))
@@ -86,4 +127,3 @@ namespace TemperatuurMetingen.Patterns.Concurrency.Actor.Actors
         }
     }
 }
-
