@@ -13,11 +13,7 @@
     <SourceRoot Include="C:\Users\brand\.nuget\packages\" />
     <SourceRoot Include="C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\" />
   </ItemGroup>
-  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Import Project="$(NuGetPackageRoot)xunit.core\2.9.3\build\xunit.core.props" Condition="Exists('$(NuGetPackageRoot)xunit.core\2.9.3\build\xunit.core.props')" />
-  </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Pkgxunit_analyzers Condition=" '$(Pkgxunit_analyzers)' == '' ">C:\Users\brand\.nuget\packages\xunit.analyzers\1.18.0</Pkgxunit_analyzers>
     <PkgAkka_Analyzers Condition=" '$(PkgAkka_Analyzers)' == '' ">C:\Users\brand\.nuget\packages\akka.analyzers\0.3.1</PkgAkka_Analyzers>
   </PropertyGroup>
 </Project>

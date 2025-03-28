@@ -5,20 +5,33 @@ using TemperatuurMetingen.Utilities;
 
 namespace TemperatuurMetingen.Patterns.Behavioral.Strategy
 {
+    /// <summary>
+    /// Parses sensor data in the manufacturer-first format.
+    /// </summary>
     public class ManufacturerFirstFormatParser : ISensorDataParser
     {
+        /// <summary>
+        /// Determines if the parser can handle the given raw data.
+        /// </summary>
+        /// <param name="rawData">The raw sensor data string.</param>
+        /// <returns>True if the data starts with "manufac:" or "manu:", otherwise false.</returns>
         public bool CanParse(string rawData)
         {
             return rawData.StartsWith("manufac:") || rawData.StartsWith("manu:");
         }
 
+        /// <summary>
+        /// Parses the raw sensor data into a <see cref="SensorData"/> object.
+        /// </summary>
+        /// <param name="rawData">The raw sensor data string.</param>
+        /// <returns>A <see cref="SensorData"/> object containing the parsed data.</returns>
         public SensorData Parse(string rawData)
         {
             var data = new SensorData();
-            
+
             // Split the raw data into key-value pairs
             var pairs = DataParsingHelper.ExtractKeyValuePairs(rawData);
-            
+
             // Parse each key-value pair - use same logic as StandardFormatParser
             foreach (var pair in pairs)
             {
@@ -66,10 +79,10 @@ namespace TemperatuurMetingen.Patterns.Behavioral.Strategy
                         break;
                 }
             }
-            
+
             // Standardize the data
             DataParsingHelper.StandardizeData(data);
-            
+
             return data;
         }
     }
