@@ -1,5 +1,7 @@
 # Temperature Monitoring System Documentation
 
+For launch instructions and dependencies, please see Requirements-Dependencies.md
+
 ## Table of Contents
 1. [Project Overview](#project-overview)
 2. [Design Patterns Implemented](#design-patterns-implemented)
