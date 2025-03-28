@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fc0l+7SXH40=",
+  "dgSpecHash": "WJKbm+aHVM4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\brand\\RiderProjects\\temperatuurmeting\\TemperatuurMetingen\\TemperatuurMetingen.csproj",
+  "projectFilePath": "C:\\Users\\brand\\RiderProjects\\TemperatuurMetingen\\TemperatuurMetingen\\TemperatuurMetingen.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\brand\\.nuget\\packages\\akka\\1.5.40\\akka.1.5.40.nupkg.sha512",
     "C:\\Users\\brand\\.nuget\\packages\\akka.analyzers\\0.3.1\\akka.analyzers.0.3.1.nupkg.sha512",
